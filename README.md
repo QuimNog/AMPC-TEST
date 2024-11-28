@@ -10,11 +10,13 @@ coded in November 2024
 * #### Prerequisites
 * #### Getting started
 * #### Project structure
+* ### Setting up envrionment variables
 * #### Building the project
 * #### Running  tests on local
-* #### CI/CD approach
 * #### Test execution (in detail)
-* #### Improvements
+* #### CI/CD approach
+* #### Other Considerations
+* #### Future work
 
 
 ### Assignment Overview ###
@@ -33,11 +35,10 @@ flows that you consider useful or would like to showcase for this assignment.
 ## Prerequisites
 Here are some must-have prerequisites in order to run the project:
 
+* git installed 
 * npm installed
-* Git installed
-* Typescript installed (npm install typescript)
-* Cucumber installed (npm i @cucumber/cucumber)
-* node (npm i node@lts)
+* node installed
+* cucumber installed (npm i @cucumber/cucumber)
 
 
 ## Getting Started
@@ -134,6 +135,10 @@ This would run all the tagged tests as _@task1_ using 3 parallel instances until
 
 We can also skip tests from running by just tagging them with the @skip tag as defined in _src/config.js_ folder.
 
+When any test is failing (in local or in the pipeline) test are stored in the @rerun.txt _FailedTest_ folder, this will allow us in the future to run the failing tests in that file using the second profile defined in the config.js
+
+Additionally we are also displaying both the failed and the passed scenario in the cucumber-repor.html in the _test-results_ folder. Just open it with your browser and you will have all the details of the last run. 
+
 * ## Test execution (in detail)
 
 **_Assumption: previous material has been read_**
@@ -166,6 +171,7 @@ Please consider that in order to sucessfully run all tests you will need to conf
  - The step : _"retrieving all commits from public repository"_ has set a timeout of 180 seconds. This should be enough to get around 15000 commits from any repo from the tests I runned. In any case, timeout can also be changed from the step in this case. 
 
 * #### Future work
-
-
-
+Had some fun doing this tests over the weekend, and while time constrains is of course to be considered. However im quite satisfied with results, here's some things I think could be improved: 
+   - Better loggin when running the tests (When several test are running at the same time, we could use the state of our Custom World to show which test case is producing those logs)
+   - Improve reporting on failure. Although the existing ones do the job, we could apply some improvements to identify trends on test failures. 
+   - Improve the pipeline so it could be triggered in several environments (doesn't apply here, but would be a nice to have for real projects)
