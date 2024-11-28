@@ -44,7 +44,7 @@ Here are some must-have prerequisites in order to run the project:
 
 To clone the project, go to your directory of choice via terminal and execute the following command: 
 
-> git clone git@gitlab.emobg.io:go/connexus/connected_vehicles_obo_e2e_ui_tests.git
+> git clone https://github.com/QuimNog/AMPC-TEST.git
 
 
 ## Project Structure
