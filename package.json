@@ -1,0 +1,27 @@
+{
+  "name": "ampc_technical_test_cucumber_playwright",
+  "version": "1.0.0",
+  "description": "\"Hello World! :)\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "cucumber-js test --config=src/config/config.js",
+    "build": "tsc",
+    "test:failed": "cucumber-js -p rerun failedTests/@rerun.txt --config=src/config/config.js"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "class-transformer": "^0.5.1",
+    "dotenv": "^16.4.5",
+    "playwright": "^1.49.0",
+    "ts-auto-guard": "^5.0.1",
+    "typescript-json-serializer": "^6.0.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^11.1.0",
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^22.9.3",
+    "ts-node": "^10.9.2"
+  }
+}

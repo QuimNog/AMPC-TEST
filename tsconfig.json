@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+      "noImplicitAny": false,
+      "noEmitOnError": true,
+      "removeComments": false,
+      "sourceMap": true,
+      "resolveJsonModule": true,
+      "esModuleInterop": true, 
+      "module": "NodeNext",
+      "target": "ES2020",
+      "types": ["@cucumber/cucumber"], 
+      "lib": ["DOM", "ES2020"],
+      "outDir": "dist",
+      "moduleResolution": "nodenext"
+    },
+    "include": [
+      "src/**/**/*",
+      "test/**/**/*", "test",
+    ], 
+    "resolveJsonModule": true
+  }
