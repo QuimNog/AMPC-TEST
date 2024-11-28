@@ -1,0 +1,61 @@
+name: AMPC API TEST
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+env:
+  AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
+  AUTH_TOKEN_RESTRICTED_PERMISSIONS: ${{ secrets.AUTH_TOKEN_RESTRICTED_PERMISSIONS }}
+
+jobs:
+  setup-environment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dummy Setup
+        run: echo "This is a dummy setup to showcase possibilities"
+
+  acceptance-tests:
+    needs: setup-environment
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        task: [task1, task2, task3, task4, task5, task6]
+    timeout-minutes: 5
+    continue-on-error: true  # Allow other matrix tasks to run even if one fails
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Run Setup Action
+        uses: ./.github/actions/setup-environment
+        with:
+          node-version: lts/*
+      - name: Run Tests for ${{ matrix.task }}
+        run: npm run test --tags=@${{ matrix.task }}
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: test-results-${{ matrix.task }}
+          path: test-results/
+          retention-days: 1
+
+  e2e-tests:
+    needs: [setup-environment, acceptance-tests]
+    runs-on: ubuntu-latest
+    if: ${{ always() && success() }}  # Only run if acceptance-tests succeed
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Run Setup Action
+        uses: ./.github/actions/setup-environment
+        with:
+          node-version: lts/*
+      - name: Run Tests for E2E
+        run: npm run test
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: test-results-e2eTests
+          path: test-results/
+          retention-days: 1
