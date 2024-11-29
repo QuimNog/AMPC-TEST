@@ -10,7 +10,7 @@ coded in November 2024
 * #### Prerequisites
 * #### Getting started
 * #### Project structure
-* ### Setting up envrionment variables
+* #### Setting up envrionment variables
 * #### Building the project
 * #### Running  tests on local
 * #### Test execution (in detail)
@@ -151,9 +151,9 @@ This is using the cucumber.js runner to exectute the tests with a certain config
 
 About **_npm run test:failed_**: this command is used to executed the failed tests in the previous execution (assuming that a _@rerun.txt_ file has been created). If we check the command in the  _package.json_ file, we can see it also executes the following command: 
 
-> cucumber-js -p rerun one-backoffice/@rerun.txt --config=src/config/config.js
+> cucumber-js -p rerun failedTests/@rerun.txt --config=src/config/config.js
 
-This is using the cucumber.js runner to run all the tests especified in the _one-backoffice/@rerun.txt_ file with the **_rerun_** profile found in the _config.js_ file (you can check [this](https://github.com/cucumber/cucumber-js/blob/main/docs/profiles.md) for more information about profiles). Again we are specifing the configuration with the _--config=src/config/config.js_ part.
+This is using the cucumber.js runner to run all the tests especified in the _failedTests/@rerun.txt_ file with the **_rerun_** profile found in the _config.js_ file (you can check [this](https://github.com/cucumber/cucumber-js/blob/main/docs/profiles.md) for more information about profiles). Again we are specifing the configuration with the _--config=src/config/config.js_ part.
 
 * ## CI/CD approach
 
