@@ -39,7 +39,7 @@ export class Commits {
 
     async retrieveAllCommitsFromRepoForLoggedUser(repositoryToGet: string) {
         let loggedUser: LoggedUser = await this.apiClient.getLoggedUser();
-        let userName = await loggedUser.login;
+        let userName = loggedUser.login;
 
         if (await this.apiClient.isUserAuth()) {
             let repoName = await this.repositories.getFirstOrLastRepositoryName(repositoryToGet);
@@ -59,7 +59,6 @@ export class Commits {
     }
 
     private async printCommits(commits: Commit[]) {
-
         if ("TRUE" == `${process.env.PRINT_COMMITS}`) {
             commits.forEach(commit => {
                 console.log(commit.sha)
@@ -99,6 +98,10 @@ export class Commits {
 
     async getTotalNumberOfCommits(response): Promise<number> {
         const linkHeader = await response.headers()['link'];
+        if (!linkHeader) {
+            throw new Error('Missing link header. Not able to determine total number of commits.');
+        }
+
         const match = linkHeader.match(/<[^>]*[?&]page=(\d+)[^>]*>;\s*rel="last"/);
 
         return parseInt(match[1], 10);

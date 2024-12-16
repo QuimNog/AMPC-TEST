@@ -10,9 +10,11 @@ export class APIClient {
     private apiRequestContext: APIRequestContext;
     private apiResponse: APIResponse;
     private loggedUser: LoggedUser;
+    private validationsManager: APIValidationsManager;
 
-    constructor(private validationsManager: APIValidationsManager, apiRequestContext: APIRequestContext) {
+    constructor(validationsManager: APIValidationsManager, apiRequestContext: APIRequestContext) {
         this.apiRequestContext = apiRequestContext;
+        this.validationsManager = validationsManager;
     }
 
     async setAuthenticatedUser(role: string) {
@@ -35,14 +37,14 @@ export class APIClient {
     async get(endpoint?: string): Promise<APIResponse> {
         this.apiResponse = await this.apiRequestContext.get(endpoint, { headers: this.headers, params: this.queryParams })
         this.validationsManager.setAPIResponse(this.apiResponse);
-        this.queryParams = null;
+        this.resetQueryParameters();
         return this.apiResponse;
     }
 
     async patch(endpoint?: string, payload?: string): Promise<APIResponse> {
         this.apiResponse = await this.apiRequestContext.patch(endpoint, { data: payload, headers: this.headers, params: this.queryParams })
         this.validationsManager.setAPIResponse(this.apiResponse)
-        this.queryParams = null;
+        this.resetQueryParameters();
         return this.apiResponse;
     }
 
@@ -60,17 +62,12 @@ export class APIClient {
     }
 
     async setQueryParameters(dataTable: DataTable) {
-        if (this.queryParams != undefined && this.queryParams != null) {
-            dataTable.rows().forEach(([key, value]: [string, string]) => {
-                this.queryParams.append(key, value);
-            })
-        }
-        else {
+        if (!this.queryParams) {
             this.queryParams = new URLSearchParams();
-            dataTable.rows().forEach(([key, value]: [string, string]) => {
-                this.queryParams.append(key, value);
-            })
         }
+        dataTable.rows().forEach(([key, value]: [string, string]) => {
+            this.queryParams.append(key, value);
+        });
     }
 
     async isUserAuth(): Promise<boolean> {
@@ -78,6 +75,15 @@ export class APIClient {
             return true;
         }
         return false;
+    }
+
+    private resetQueryParameters() {
+        this.queryParams = null;
+    }
+
+    async usePreviousHeaderInNextRequest(previousheaderName: string, nextHeaderName: string) {
+        const headerValue = await this.getResponseHeader(previousheaderName.toLocaleLowerCase());
+        await this.setHeaders({ [nextHeaderName]: headerValue });
     }
 }
 

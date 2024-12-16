@@ -1,7 +1,6 @@
 @task1
 Feature: Retrieve the public profile information of a specific user without authentication
 
-  @quim
   Scenario: Retrieve public information of a valid user - 200
     Given an "Unauthenticated" API user with role ""
     When retrieving public information from user "octocat"
