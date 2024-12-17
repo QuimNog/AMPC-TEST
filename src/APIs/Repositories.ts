@@ -33,18 +33,17 @@ export class Repositories {
     }
 
     async getRepositoriesLoggedUserWithPreviousHeader(previousheaderName: string, nextHeaderName: string) {
-        const headerValue = await this.apiClient.getResponseHeader(previousheaderName.toLocaleLowerCase());
-        this.apiClient.setHeaders({ [nextHeaderName]: headerValue });
+        await this.apiClient.usePreviousHeaderInNextRequest(previousheaderName, nextHeaderName)
         await this.apiClient.get(this.REPOS_LOGGED_USER);
     }
 
-    async getAllRepositoriesForLoggedUser(apiclient: APIClient): Promise<any> {
+    async getAllRepositoriesForLoggedUser(): Promise<any> {
         const allRepos = [];
 
         let nextUrl = this.REPOS_LOGGED_USER;
         while (nextUrl) {
             try {
-                const response = await apiclient.get(nextUrl);
+                const response = await this.apiClient.get(nextUrl);
 
                 if (response.status() === 403) {
                     throw new Error('Rate limit exceeded. Please try again later');
@@ -65,8 +64,7 @@ export class Repositories {
     }
 
     public async getFirstOrLastRepositoryName(repositoryToGet: string) {
-        let repositories: Repository[] = await this.getAllRepositoriesForLoggedUser(this.apiClient);
-
+        let repositories: Repository[] = await this.getAllRepositoriesForLoggedUser();
         if ("last" == repositoryToGet.toLocaleLowerCase()) {
             return repositories[repositories.length - 1].name;
         }

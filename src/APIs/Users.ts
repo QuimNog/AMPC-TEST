@@ -5,7 +5,6 @@ import { DataTable } from "@cucumber/cucumber";
 import { APIClient } from "./APIClient";
 import { API_URLS } from "../constants/API_URL";
 import { SCHEMA_PATHS } from "../constants/SCHEMA_PATHS";
-import { LoggedUser } from "../models/User/LoggedUser";
 
 export class User {
 
@@ -24,27 +23,25 @@ export class User {
     }
 
     public async getPublicInfomation(username: string) {
-        let url = `${this.BASE_URL_PUBLIC_USER}${username}`
         let response = await this.apiClient.get(`${this.BASE_URL_PUBLIC_USER}${username}`);
         if (response.status() == 200) {
-            expect(await this.validationManager.validateResponseToSchema(await response.json(), SCHEMA_PATHS.USER)).toBeTruthy();
+            await this.validateUserSchema(response);
         }
     }
 
     public async getLoggedUserInformation() {
         let response = await this.apiClient.get(this.BASE_URL_LOGGED_USER);
         if (response.status() == 200) {
-            expect(await this.validationManager.validateResponseToSchema(await response.json(), SCHEMA_PATHS.USER)).toBeTruthy();
+            await this.validateUserSchema(response);
             this.apiClient.setLoggedUserName(response.json());
         }
     }
 
     public async retrieveLoggedProfileUsingPreviousHeade(previousheaderName: string, nextHeaderName: string) {
-        const headerValue = await this.apiClient.getResponseHeader(previousheaderName.toLocaleLowerCase());
-        this.apiClient.setHeaders({ [nextHeaderName]: headerValue });
+        await this.apiClient.usePreviousHeaderInNextRequest(previousheaderName, nextHeaderName);
         let response = await this.apiClient.get(this.BASE_URL_LOGGED_USER);
         if (response.status() == 200) {
-            expect(await this.validationManager.validateResponseToSchema(await response.json(), SCHEMA_PATHS.USER)).toBeTruthy();
+            await this.validateUserSchema(response);
             this.apiClient.setLoggedUserName(response.json());
         }
     }
@@ -52,18 +49,16 @@ export class User {
     public async updateLoggedUserInformation(dataTable: DataTable) {
         const currentDate = new Date();
         const payload = await this.utils.dataTableToPayload(dataTable, currentDate);
-
         let response = await this.apiClient.patch(this.BASE_URL_LOGGED_USER, payload);
         if (response.status() == 200) {
-            expect(await this.validationManager.validateResponseToSchema(await response.json(), SCHEMA_PATHS.USER)).toBeTruthy();
+            await this.validateUserSchema(response);
             this.apiClient.setLoggedUserName(response.json());
             this.lastUpdate = currentDate;
         }
     }
 
     public async updateLoggedProfileUsingPreviousHeader(previousheaderName: string, nextHeaderName: string, dataTable: DataTable) {
-        const headerValue = await this.apiClient.getResponseHeader(previousheaderName.toLocaleLowerCase());
-        this.apiClient.setHeaders({ [nextHeaderName]: headerValue });
+        await this.apiClient.usePreviousHeaderInNextRequest(previousheaderName, nextHeaderName);
         const payload = await this.utils.dataTableToPayload(dataTable, this.lastUpdate);
         await this.apiClient.patch(this.BASE_URL_LOGGED_USER, payload);
     }
@@ -75,4 +70,9 @@ export class User {
         });
     }
 
+    private async validateUserSchema(response) {
+        expect(await this.validationManager.validateResponseToSchema(await response.json(), SCHEMA_PATHS.USER)).toBeTruthy();
+    }
 }
+
+
