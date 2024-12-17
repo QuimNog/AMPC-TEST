@@ -7,6 +7,7 @@ import { Commits } from '../APIs/Commits';
 import { Repositories } from '../APIs/Repositories';
 import { User } from '../APIs/Users';
 import { APIRequestContext } from 'playwright';
+import { Gists } from '../APIs/Gists';
 
 export class CustomWorld extends World {
 
@@ -16,6 +17,7 @@ export class CustomWorld extends World {
     public static commits: Commits;
     public static repositories: Repositories;
     public static user: User;
+    public static gists: Gists;
 
     public static initializeApiClient(requestContext: APIRequestContext) {
         dotenv.config();
@@ -24,6 +26,7 @@ export class CustomWorld extends World {
         this.commits = new Commits(this.apiClient);
         this.repositories = new Repositories(this.apiClient)
         this.user = new User(this.apiClient)
+        this.gists = new Gists(this.apiClient, this.apiValidationManager)
     }
 
 

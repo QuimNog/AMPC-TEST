@@ -48,6 +48,14 @@ export class APIClient {
         return this.apiResponse;
     }
 
+    async post(endpoint?: string, payload?: string): Promise<APIResponse> {
+        await this.setHeaders({ 'X-GitHub-Api-Version': "2022-11-28" });
+        this.apiResponse = await this.apiRequestContext.post(endpoint, { data: payload, headers: this.headers })
+        this.validationsManager.setAPIResponse(this.apiResponse)
+        this.resetQueryParameters();
+        return this.apiResponse;
+    }
+
     async getResponseHeader(headerName: string): Promise<string> {
         const headers = this.apiResponse.headers();
         return headers[headerName];
